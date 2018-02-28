@@ -40,18 +40,17 @@ namespace art {
         };
         static void *java_lang_Class_;
 
-        class ArtField : public Object {
-
+//        class ArtField : public Object {
 //            uint32_t declaring_class_;
-
-            uint32_t access_flags_;
-
-            // Dex cache index of field id
-            uint32_t field_dex_idx_;
-
-            // Offset of field within an instance or in the Class' static fields
-            uint32_t offset_;
-        };
+//
+//            uint32_t access_flags_;
+//
+//            // Dex cache index of field id
+//            uint32_t field_dex_idx_;
+//
+//            // Offset of field within an instance or in the Class' static fields
+//            uint32_t offset_;
+//        };
 
 
         class ArtMethod : public Object {
@@ -84,9 +83,10 @@ namespace art {
 
             // The hotness we measure for this method. Managed by the interpreter. Not atomic, as we allow
             // missing increments: if the method is hot, we will see it eventually.
-//            uint16_t hotness_count_;
+            uint16_t hotness_count_;
 
             // Fake padding field gets inserted here.
+
 
             // Must be the last fields in the method.
             // PACKED(4) is necessary for the correctness of

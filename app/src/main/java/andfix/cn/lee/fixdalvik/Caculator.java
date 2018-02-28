@@ -8,9 +8,7 @@ package andfix.cn.lee.fixdalvik;
  */
 public class Caculator {
 
-    public int caculate()
-
-    {
+    public int caculate() {
         int i = 0;
         int j = 100;
         return j / i;
