@@ -38,6 +38,7 @@ namespace art {
             uint32_t status_;
 
         };
+
         static void *java_lang_Class_;
 
 //        class ArtField : public Object {
@@ -73,7 +74,7 @@ namespace art {
 
             // Index into method_ids of the dex file associated with this method.
             uint32_t dex_method_index_;
-
+            uint32_t method_dex_index_;
             /* End of dex file fields. */
 
             // Entry within a dispatch table for this method. For static/direct methods the index is into

@@ -159,7 +159,7 @@ public class DxManager {
             try {
                 Class wrongClass = Class.forName(wrongClazzName);
                 //最终拿到错误的Method对象
-                Method wrongMethod = wrongClass.getMethod(wrongMethodName, method.getParameterTypes());
+                Method wrongMethod = wrongClass.getDeclaredMethod(wrongMethodName, method.getParameterTypes());
                 //修复
                 Log.i(TAG, "修复错误方法：" + wrongMethodName);
                 replace(wrongMethod, method);
