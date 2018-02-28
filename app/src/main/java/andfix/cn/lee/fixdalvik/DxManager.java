@@ -35,10 +35,10 @@ public class DxManager {
      */
     public void loadDex(File dexFilePath) {
         //方式1. 初始的实现方式：使用DexFile加载dex文件遍历类和类方法找到要修复的方法进如native修复方法。
-        dexFileFix(dexFilePath);
+//        dexFileFix(dexFilePath);
 
         //方式2.修复方式：使用DexClassLoader加载指定的类名的类。
-        singleFix(dexFilePath);
+//        singleFix(dexFilePath);
 
         //方式3.反射DexClassLoader->pathList(DexPathList)->dexElement(DexPathList内部静态类Element)->dexFile(DexFile)
         dexClassLoadFix(dexFilePath);
