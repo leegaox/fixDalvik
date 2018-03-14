@@ -203,6 +203,10 @@ app短下载好out.dex补丁包存放在跟路径下，通过**DexClassLoader**(
 
     private native void replace(Method wrongMethod, Method rightMethod);
 ````
+#### Andfix优缺点
+
+- 优点：运行时即时生效，无感知。
+- 缺点：由于Android系统的碎片话，厂商的定制化，底层数据结构的不确定性，兼容性差；不支持原有类方法和字段的增减少（会改变方法，字段在提成数据结构中的指针偏移量）。
 
 ### 注
 #### JVM,Dalvik and ART
