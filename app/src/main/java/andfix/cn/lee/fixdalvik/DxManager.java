@@ -58,8 +58,6 @@ public class DxManager {
         DexClassLoader dexClassLoader = new DexClassLoader(dexFilePath.getAbsolutePath(), dexOutputDir.getAbsolutePath(), null, context.getClassLoader());
         try {
             Class<?> cl = Class.forName("dalvik.system.BaseDexClassLoader");
-//            Constructor<?>[] constructors = cl.getConstructors();
-//            Object instance = constructors[0].newInstance(dexFilePath.getAbsolutePath(), dexOutputDir, null, context.getClassLoader());
             //获取私有变量pathList（DexPathList实例）
             Object pathList = getFieldValue(cl, "pathList", dexClassLoader);
             Class<?> DexPathListCl = Class.forName("dalvik.system.DexPathList");
@@ -142,10 +140,10 @@ public class DxManager {
     }
 
     /**
-     * 调用native修复类方法
-     *
-     * @param realClazz
-     */
+         * 调用native修复类方法
+         *
+         * @param realClazz
+         */
     private void fix(Class realClazz) {
         Method[] methods = realClazz.getDeclaredMethods();
         for (Method method : methods) {
