@@ -1,13 +1,9 @@
 ## 热修复 - 阿里云andfix原理
 > Andfix在已经加载了的类中直接在native层替换掉原有方法。
-> Android的java运行环境，在4.4以下用的是Dalvik虚拟机，而在4.4以上用的是Art虚拟机。Java方法在Dalvik、Art虚拟机中都对应着一个ArtMethod，ArtMethod记录了这个Java方法的所有信息，包括所属类、访问权限、代码执行地址等等。而对于不同的Android版本，底层Java对象的数据结构是不同的，因此需要对不同的版本做兼容，本文以Android4.4以下环境即Dalvik运行时为例说明Andfix的原理。
+> Android的java运行环境，在4.4以下用的是Dalvik虚拟机，而在4.4以上用的是Art虚拟机。Java方法在Dalvik、Art虚拟机中都对应着一个底层数据结构**ArtMethod**，ArtMethod记录了这个Java方法的所有信息，包括所属类、访问权限、代码执行地址等等。而对于不同的Android版本，底层Java对象的数据结构是不同的，因此需要对不同的版本做兼容，本文以Android4.4以下环境即Dalvik运行时为例说明Andfix的原理。
 
-一个类的加载，必经resolve(dvmResolvceClass)->link(dvmLinkClass)->init(dvmInitClass)三个阶段
-  -resolve
-  -link
-  - init阶段：做类的Verify和Optimize完成父类的初始化，当前类的初始化，static变量的初始化和赋值等操作。
-
-给一个类的所有方法分配内存空间发生在link阶段，Dalvik运行时下native层加载方法如下：
+一个类的加载，必经resolve(dvmResolveClass)->link(dvmLinkClass)->init(dvmInitClass)三个阶段
+,给一个类的所有方法分配内存空间发生在link阶段，Dalvik运行时下native层加载方法如下：
 ````c++
 @android4.4_r1/art/runtime/class_linker.cc
 
@@ -139,7 +135,7 @@ public class Caculator {
 - 使用sdk/build-tools/23.0.2/dx.bat 生成dex文件:out.dex   ,  cmd命令：dx --dex --output sourcePath(dex生成路径) path（.class路径）
 
 ### app加载dex补丁包
-app短下载好out.dex补丁包存放在跟路径下，通过**DexFile**或者**DexClassLoader**加载dex文件,通过反射找到加载的dex里的DexFile对象的dexElements（类元素数组）,循环遍历修复dex里的类文件：
+app短下载好out.dex补丁包存放在跟路径下，通过**DexClassLoader**(代替废弃的DexFile)加载dex文件,通过反射找到加载的dex里的DexFile对象的dexElements（类元素数组）,循环遍历修复dex里的类文件：
 ````java
     private void dexClassLoadFix(File dexFilePath) {
         //指定dexoutputpath为APP自己的缓存目录
@@ -177,7 +173,7 @@ app短下载好out.dex补丁包存放在跟路径下，通过**DexFile**或者**
         }
     }
 ````
-通过**@Replace**注解找到类里面需要替换的方法，然后调用nativce方法进行修复：
+通过**Replace**注解找到类里面需要替换的方法，然后调用nativce方法进行修复：
 ````java
     private void fix(Class realClazz) {
         Method[] methods = realClazz.getDeclaredMethods();
@@ -212,6 +208,6 @@ app短下载好out.dex补丁包存放在跟路径下，通过**DexFile**或者**
 #### JVM,Dalvik and ART
 
 JVM加载的是class格式的类文件，Java虚拟机使用的指令集是基于堆栈
-Dalvik加载的是dex格式的类文件，Dalvik虚拟机使用的指令是基于寄存器 JIT在运行时将解释语言编译成机器语言。    
+Dalvik加载的是dex格式的类文件，Dalvik虚拟机使用的指令是基于寄存器 JIT在运行时将解释语言编译成机器语言。
 ART加载的oat文件，直接运行oat文件里类、方法所映射的机器指令。ART虚拟机使用的指令是基于寄存器。AOT 在程序运行前将解释语言编译成机器语言，发生在apk安装时。
-实际上，Dalvik和Art最后加载的都是优化后的odex（optimized dex），只是Art优化后的odex 比Dalvik优化的odex文件多了oat文件头。
+实际上，Dalvik和Art最后加载的都是优化后的odex（optimized dex），只是Art优化后的odex 比Dalvik优化的odex文件多了oat文件。
